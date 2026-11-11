@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ระบบสต็อกสินค้า</title>
+<style>
+:root {
+  /* colors */
+  --primary: #e60023;
+  --primary-pressed: #cc001f;
+  --ink: #000000;
+  --body: #33332e;
+  --mute: #62625b;
+  --ash: #91918c;
+  --hairline: #dadad3;
+  --canvas: #ffffff;
+  --surface: #f6f6f3;
+  --secondary: #e5e5e0;
+  --dark: #262622;
+  --focus: #435ee5;
+  --error: #9e0a0a;
+  --success: #103c25;  --success-bg: #c7f0da;
+  /* shape */
+  --r-md: 16px;  --r-lg: 32px;  --r-full: 9999px;
+  /* spacing */
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 16px; --s5: 24px; --s6: 32px; --s7: 64px;
+  /* font */
+  --font: Inter, -apple-system, system-ui, "Segoe UI", Roboto, Tahoma, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { font-family: var(--font); color: var(--body); background: var(--canvas); font-size: 16px; line-height: 1.4; }
+/* ---- Top nav ---- */
+.topnav {
+  position: sticky; top: 0; z-index: 10;
+  display: flex; align-items: center; gap: var(--s4);
+  min-height: 64px; padding: 0 var(--s5);
+  background: var(--canvas); border-bottom: 1px solid var(--hairline);
+}
+.brand { font-size: 18px; font-weight: 700; color: var(--ink); white-space: nowrap; letter-spacing: -0.2px; }
+.tabs { display: flex; gap: var(--s2); overflow-x: auto; margin-left: auto; scrollbar-width: none; }
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  flex: 0 0 auto; min-height: 44px; padding: 0 var(--s4);
+  border: 0; background: transparent; cursor: pointer;
+  font-family: var(--font); font-size: 14px; font-weight: 700; color: var(--mute);
+  border-radius: var(--r-md); white-space: nowrap;
+}
+.tab:hover { background: var(--surface); color: var(--ink); }
+.tab.active { color: var(--ink); background: var(--surface); }
+/* ---- Screens ---- */
+main { max-width: 1120px; margin: 0 auto; padding: var(--s5); }
+.screen { display: none; }
+.screen.active { display: block; }
+.page-title { font-size: 28px; font-weight: 700; letter-spacing: -1.2px; color: var(--ink); margin: 0 0 var(--s1); }
+.req-line { font-size: 14px; color: var(--mute); margin: 0 0 var(--s5); }
+.section { margin-bottom: var(--s6); }
+.section-title { font-size: 22px; font-weight: 600; color: var(--ink); margin: 0 0 var(--s4); }
+.card { background: var(--surface); border-radius: var(--r-md); padding: var(--s5); }
+.tbc { color: var(--mute); font-size: 14px; font-style: italic; }
+/* ---- Grid / stats ---- */
+.grid { display: grid; gap: var(--s2); }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.stat { background: var(--surface); border-radius: var(--r-md); padding: var(--s5); }
+.stat .k { font-size: 14px; color: var(--mute); margin-bottom: var(--s2); }
+.stat .v { font-size: 28px; font-weight: 700; color: var(--ink); letter-spacing: -1px; }
+.stat .v.warn { color: var(--error); }
+/* ---- Forms ---- */
+.field { margin-bottom: var(--s4); }
+.label { display: block; font-size: 14px; font-weight: 700; color: var(--ink); margin-bottom: var(--s2); }
+.input, select.input {
+  width: 100%; height: 44px; padding: 0 var(--s4);
+  background: var(--canvas); color: var(--ink);
+  border: 1px solid var(--ash); border-radius: var(--r-md);
+  font-family: var(--font); font-size: 16px;
+}
+.input:focus, select.input:focus { outline: 4px solid var(--focus); border: 2px solid var(--ink); }
+.search {
+  display: flex; align-items: center; gap: var(--s3);
+  background: var(--surface); border-radius: var(--r-full);
+  height: 48px; padding: 0 var(--s4); margin-bottom: var(--s5);
+}
+.search input { flex: 1; border: 0; background: transparent; font-size: 16px; font-family: var(--font); color: var(--ink); }
+.search input:focus { outline: none; }
+.chips { display: flex; flex-wrap: wrap; gap: var(--s2); }
+.chip {
+  border: 0; cursor: pointer; min-height: 44px;
+  background: var(--surface); color: var(--ink);
+  border-radius: var(--r-full); padding: 8px 16px;
+  font-family: var(--font); font-size: 14px; font-weight: 700;
+}
+.chip.active { background: var(--ink); color: var(--canvas); }
+/* ---- Buttons ---- */
+.btn { min-height: 44px; padding: 6px 14px; border: 0; border-radius: var(--r-md); font-family: var(--font); font-size: 14px; font-weight: 700; cursor: pointer; }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:active { background: var(--primary-pressed); }
+.btn-secondary { background: var(--secondary); color: var(--ink); }
+.btn-row { display: flex; flex-wrap: wrap; gap: var(--s3); margin-top: var(--s4); }
+/* ---- Table ---- */
+.table-wrap { overflow-x: auto; border-radius: var(--r-md); }
+table { width: 100%; border-collapse: collapse; background: var(--canvas); font-size: 14px; min-width: 560px; }
+th { text-align: left; font-size: 14px; font-weight: 700; color: var(--ink); padding: var(--s3); border-bottom: 1px solid var(--hairline); white-space: nowrap; }
+td { padding: var(--s3); border-bottom: 1px solid var(--hairline); color: var(--body); white-space: nowrap; }
+.badge { display: inline-block; font-size: 12px; font-weight: 500; border-radius: var(--r-full); padding: 4px 10px; }
+.badge-ok { background: var(--success-bg); color: var(--success); }
+.badge-warn { background: #f6dcdc; color: var(--error); }
+.badge-wait { background: var(--secondary); color: var(--ink); }
+.note { background: var(--dark); color: var(--canvas); border-radius: var(--r-md); padding: var(--s4); font-size: 14px; margin-top: var(--s4); }
+.role-bar { display: flex; flex-wrap: wrap; gap: var(--s2); margin-bottom: var(--s4); }
+@media (max-width: 768px) {
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+  .section { margin-bottom: var(--s6); }
+}
+@media (max-width: 480px) {
+  main { padding: var(--s4); }
+  .grid-3 { grid-template-columns: 1fr; }
+  .topnav { padding: 0 var(--s4); }
+  .brand { font-size: 16px; }
+  .section { margin-bottom: var(--s6); }
+}
+</style>
+</head>
+<body>
+<header class="topnav">
+  <div class="brand">ระบบสต็อกสินค้า</div>
+  <nav class="tabs">
+    <button class="tab active" data-screen="dashboard">แดชบอร์ด</button>
+    <button class="tab" data-screen="movement">รับเข้า/จ่ายออก</button>
+    <button class="tab" data-screen="count">นับสต็อก</button>
+    <button class="tab" data-screen="products">ข้อมูลสินค้า</button>
+    <button class="tab" data-screen="reports">รายงาน</button>
+  </nav>
+</header>
+<main>
+  <!-- ============ 1. Dashboard ============ -->
+  <section id="dashboard" class="screen active">
+    <h1 class="page-title">แดชบอร์ด</h1>
+    <p class="req-line">REQ-05, REQ-06, REQ-07</p>
+    <div class="search">
+      <input type="text" placeholder="ค้นหาด้วยรหัส SKU หรือชื่อสินค้า">
+      <button class="btn btn-secondary">ค้นหา</button>
+    </div>
+    <div class="grid grid-3 section">
+      <div class="stat">
+        <div class="k">ยอดคงเหลือรวม</div>
+        <div class="v">1,240</div>
+      </div>
+      <div class="stat">
+        <div class="k">จำนวน SKU ทั้งหมด</div>
+        <div class="v">86</div>
+      </div>
+      <div class="stat">
+        <div class="k">สินค้าใกล้หมด</div>
+        <div class="v warn">7</div>
+      </div>
+    </div>
+    <div class="section">
+      <h2 class="section-title">แจ้งเตือน Safety Stock</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>SKU</th><th>ชื่อสินค้า</th><th>คงเหลือ</th><th>จุดเตือน</th><th>สถานะ</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>SKU-001</td><td>สินค้าตัวอย่าง A</td><td>4</td><td>10</td><td><span class="badge badge-warn">ใกล้หมด</span></td></tr>
+            <tr><td>SKU-002</td><td>สินค้าตัวอย่าง B</td><td>8</td><td>15</td><td><span class="badge badge-warn">ใกล้หมด</span></td></tr>
+            <tr><td>SKU-003</td><td>สินค้าตัวอย่าง C</td><td>32</td><td>10</td><td><span class="badge badge-ok">ปกติ</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+  <!-- ============ 2. Stock In / Out ============ -->
+  <section id="movement" class="screen">
+    <h1 class="page-title">รับเข้า/จ่ายออก</h1>
+    <p class="req-line">REQ-03, REQ-09, REQ-12</p>
+    <div class="section card">
+      <div class="field">
+        <span class="label">สแกนบาร์โค้ด (กล้อง / เครื่องสแกน USB)</span>
+        <div class="search" style="margin-bottom: var(--s2);">
+          <input type="text" placeholder="สแกนหรือพิมพ์รหัส SKU">
+          <button class="btn btn-secondary">สแกน</button>
+        </div>
+        <span class="tbc">[TBC: รูปแบบมาตรฐานของป้ายบาร์โค้ดในปัจจุบัน]</span>
+      </div>
+      <div class="field">
+        <label class="label" for="sku">รหัส SKU</label>
+        <input class="input" id="sku" type="text" placeholder="SKU-001">
+      </div>
+      <div class="field">
+        <label class="label" for="qty">จำนวน</label>
+        <input class="input" id="qty" type="number" placeholder="0">
+      </div>
+      <div class="field">
+        <span class="label">ประเภทธุรกรรม</span>
+        <div class="chips">
+          <button class="chip active">ซื้อเข้า</button>
+          <button class="chip">ขายออก</button>
+          <button class="chip">สินค้าเสียหาย</button>
+          <button class="chip">ส่งคืน</button>
+        </div>
+      </div>
+      <div class="field">
+        <label class="label" for="note">หมายเหตุ</label>
+        <input class="input" id="note" type="text" placeholder="ระบุหมายเหตุ (ถ้ามี)">
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary">บันทึกรายการ</button>
+        <button class="btn btn-secondary">ยกเลิก</button>
+      </div>
+    </div>
+    <div class="section">
+      <h2 class="section-title">รายการล่าสุด</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>วันที่</th><th>SKU</th><th>ประเภท</th><th>จำนวน</th><th>ผู้บันทึก</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>11/11/2026</td><td>SKU-001</td><td>ซื้อเข้า</td><td>+20</td><td>พนักงานตัวอย่าง 1</td></tr>
+            <tr><td>11/11/2026</td><td>SKU-002</td><td>ขายออก</td><td>-5</td><td>พนักงานตัวอย่าง 2</td></tr>
+            <tr><td>10/11/2026</td><td>SKU-003</td><td>สินค้าเสียหาย</td><td>-2</td><td>พนักงานตัวอย่าง 1</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+  <!-- ============ 3. Cycle Count ============ -->
+  <section id="count" class="screen">
+    <h1 class="page-title">นับสต็อก</h1>
+    <p class="req-line">REQ-10, REQ-11</p>
+    <div class="section card">
+      <div class="field">
+        <label class="label" for="zone">เลือกโซน / ชั้นวาง</label>
+        <select class="input" id="zone">
+          <option>โซน A - ชั้นวาง 1</option>
+          <option>โซน B - ชั้นวาง 2</option>
+          <option>โซน C - ชั้นวาง 3</option>
+        </select>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary">เริ่มรอบนับ</button>
+      </div>
+    </div>
+    <div class="section">
+      <h2 class="section-title">ผลการนับและผลต่าง</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>SKU</th><th>ชื่อสินค้า</th><th>ยอดในระบบ</th><th>ยอดนับจริง</th><th>ผลต่าง</th><th>สถานะ</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>SKU-001</td><td>สินค้าตัวอย่าง A</td><td>40</td><td>38</td><td>-2 (5%)</td><td><span class="badge badge-wait">รออนุมัติ</span></td></tr>
+            <tr><td>SKU-002</td><td>สินค้าตัวอย่าง B</td><td>25</td><td>25</td><td>0</td><td><span class="badge badge-ok">ผ่าน</span></td></tr>
+            <tr><td>SKU-003</td><td>สินค้าตัวอย่าง C</td><td>60</td><td>52</td><td>-8 (1,600 บาท)</td><td><span class="badge badge-wait">รออนุมัติ</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-secondary">อนุมัติรายการส่วนต่าง (Admin)</button>
+      </div>
+      <p class="tbc" style="margin-top: var(--s3);">[TBC: ช่องทางการแจ้งเตือนกรณีต้องรอการอนุมัติส่วนต่างสต็อก]</p>
+    </div>
+  </section>
+  <!-- ============ 4. Products ============ -->
+  <section id="products" class="screen">
+    <h1 class="page-title">ข้อมูลสินค้า</h1>
+    <p class="req-line">REQ-01, REQ-08</p>
+    <div class="section card">
+      <div class="field">
+        <span class="label">บทบาทผู้ใช้งาน (RBAC)</span>
+        <div class="role-bar">
+          <button class="chip active">Admin</button>
+          <button class="chip">Warehouse Staff</button>
+          <button class="chip">Executive / Auditor</button>
+        </div>
+      </div>
+      <div class="field">
+        <label class="label" for="p-sku">รหัส SKU</label>
+        <input class="input" id="p-sku" type="text" placeholder="SKU-001">
+      </div>
+      <div class="field">
+        <label class="label" for="p-name">ชื่อสินค้า</label>
+        <input class="input" id="p-name" type="text" placeholder="ชื่อสินค้า">
+      </div>
+      <div class="field">
+        <label class="label" for="p-cat">หมวดหมู่</label>
+        <input class="input" id="p-cat" type="text" placeholder="หมวดหมู่">
+      </div>
+      <div class="field">
+        <label class="label" for="p-price">ราคา (บาท)</label>
+        <input class="input" id="p-price" type="number" placeholder="0">
+      </div>
+      <div class="field">
+        <label class="label" for="p-point">จุดเตือนสต็อก</label>
+        <input class="input" id="p-point" type="number" placeholder="0">
+      </div>
+      <div class="field">
+        <label class="label" for="p-sup">ซัพพลายเออร์</label>
+        <input class="input" id="p-sup" type="text" placeholder="ชื่อซัพพลายเออร์">
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary">บันทึกสินค้า</button>
+        <button class="btn btn-secondary">ยกเลิก</button>
+      </div>
+    </div>
+    <div class="section">
+      <h2 class="section-title">รายการสินค้า</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>SKU</th><th>ชื่อสินค้า</th><th>หมวดหมู่</th><th>ราคา</th><th>จุดเตือน</th><th>ซัพพลายเออร์</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>SKU-001</td><td>สินค้าตัวอย่าง A</td><td>หมวดหมู่ 1</td><td>120</td><td>10</td><td>ซัพพลายเออร์ 1</td></tr>
+            <tr><td>SKU-002</td><td>สินค้าตัวอย่าง B</td><td>หมวดหมู่ 2</td><td>85</td><td>15</td><td>ซัพพลายเออร์ 2</td></tr>
+            <tr><td>SKU-003</td><td>สินค้าตัวอย่าง C</td><td>หมวดหมู่ 1</td><td>200</td><td>10</td><td>ซัพพลายเออร์ 1</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+  <!-- ============ 5. Reports ============ -->
+  <section id="reports" class="screen">
+    <h1 class="page-title">รายงาน</h1>
+    <p class="req-line">REQ-04, REQ-13, REQ-14</p>
+    <div class="section card">
+      <div class="field">
+        <label class="label" for="r-type">ประเภทรายงาน</label>
+        <select class="input" id="r-type">
+          <option>ประวัติการเคลื่อนไหว (รายวัน)</option>
+          <option>ประวัติการเคลื่อนไหว (รายเดือน)</option>
+          <option>มูลค่าสต็อกรวมในคลัง</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="label" for="r-date">ช่วงวันที่</label>
+        <input class="input" id="r-date" type="date">
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-secondary">ส่งออก Excel</button>
+        <button class="btn btn-secondary">ส่งออก CSV</button>
+      </div>
+    </div>
+    <div class="section">
+      <h2 class="section-title">ประวัติการเคลื่อนไหวสินค้า</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>วันที่</th><th>SKU</th><th>ประเภท</th><th>เข้า</th><th>ออก</th><th>คงเหลือ</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>11/11/2026</td><td>SKU-001</td><td>ซื้อเข้า</td><td>20</td><td>0</td><td>120</td></tr>
+            <tr><td>11/11/2026</td><td>SKU-002</td><td>ขายออก</td><td>0</td><td>5</td><td>95</td></tr>
+            <tr><td>10/11/2026</td><td>SKU-003</td><td>ส่งคืน</td><td>0</td><td>2</td><td>58</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="grid grid-3" style="margin-top: var(--s5);">
+        <div class="stat">
+          <div class="k">มูลค่าสต็อกรวม</div>
+          <div class="v">[TBC: ยอดรวม]</div>
+        </div>
+      </div>
+      <p class="tbc" style="margin-top: var(--s3);">โหมดอ่านอย่างเดียว — ไม่มีปุ่มแก้ไข · [TBC: โครงสร้าง API ที่ต้องรองรับสำหรับการเชื่อมต่อ ERP / POS]</p>
+    </div>
+  </section>
+</main>
+<script>
+  var tabs = document.querySelectorAll('.tab');
+  var screens = document.querySelectorAll('.screen');
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      var target = tab.getAttribute('data-screen');
+      tabs.forEach(function (t) { t.classList.remove('active'); });
+      screens.forEach(function (s) { s.classList.remove('active'); });
+      tab.classList.add('active');
+      var screen = document.getElementById(target);
+      if (screen) { screen.classList.add('active'); }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+</script>
+</body>
+</html>

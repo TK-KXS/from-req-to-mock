@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ระบบสต็อกสินค้า - เอกสารความต้องการทางเทคนิค (TR)</title>
+<style>
+  :root{--navy:#0B3D6B;--navy2:#12507f;--ink:#1f2937;--mute:#64748b;--line:#d7dee8;--head:#E8EEF5;--bg:#eef1f5;--card:#fff;--zebra:#f7f9fc;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Tahoma","Sarabun","Segoe UI",system-ui,sans-serif;line-height:1.6}
+  .page{max-width:940px;margin:32px auto;background:var(--card);padding:48px 56px;border-radius:10px;box-shadow:0 6px 30px rgba(11,61,107,.08)}
+  header.doc{border-bottom:3px solid var(--navy);padding-bottom:16px;margin-bottom:26px}
+  header.doc h1{color:var(--navy);font-size:25px;margin:0 0 6px}
+  header.doc .sub{color:var(--mute);font-size:13px}
+  h2{color:var(--navy);font-size:19px;margin:34px 0 12px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  h3{color:var(--navy2);font-size:15px;margin:24px 0 10px}
+  p{margin:8px 0}
+  table{width:100%;border-collapse:collapse;margin:10px 0 6px;font-size:14px}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--head);color:var(--navy);font-weight:700}
+  tbody tr:nth-child(even){background:var(--zebra)}
+  ul{padding-left:22px;margin:8px 0}
+  .figure{margin:14px 0 24px;padding:16px;border:1px solid var(--line);border-radius:10px;background:#fbfcfe}
+  .figure .cap{font-size:13px;color:var(--mute);margin-top:6px;text-align:center}
+  pre.mermaid{margin:0;text-align:center;font-size:14px;white-space:pre-wrap}
+  footer{margin-top:38px;border-top:1px solid var(--line);padding-top:12px;font-size:12px;color:var(--mute)}
+  @media print{body{background:#fff}.page{box-shadow:none;margin:0;max-width:none;padding:0}.figure{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="doc">
+    <h1>ระบบสต็อกสินค้า - เอกสารความต้องการทางเทคนิค (TR)</h1>
+    <div class="sub">รหัสเอกสาร TK-TR-001 &middot; อ้างอิงจาก BR TK-BR-001 เวอร์ชัน 1.0 &middot; เวอร์ชัน 0.1 &middot; วันที่ 11 พฤศจิกายน 2026</div>
+  </header>
+
+  <section>
+    <h2>1. ภาพรวม (Overview)</h2>
+    <table>
+      <tr><th>หัวข้อ</th><th>รายละเอียด</th></tr>
+      <tr><td>รหัสเอกสาร</td><td>TK-TR-001</td></tr>
+      <tr><td>อ้างอิงจาก</td><td>TK-BR-001 เวอร์ชัน 1.0</td></tr>
+      <tr><td>เวอร์ชัน</td><td>0.1</td></tr>
+      <tr><td>วันที่</td><td>11 พฤศจิกายน 2026</td></tr>
+    </table>
+    <p>เอกสารนี้แปลงความต้องการทางธุรกิจของระบบสต็อกสินค้าเป็นข้อกำหนดทางเทคนิค เพื่อพัฒนา Web Application สำหรับอุปกรณ์พกพา (มือถือ/แท็บเล็ต) ที่ทำงานบน Huawei Cloud แทนการใช้ระบบ Excel เดิม</p>
+  </section>
+
+  <section>
+    <h2>2. ผู้ใช้งานและสิทธิ์ (Users and Roles)</h2>
+    <table>
+      <tr><th>บทบาท</th><th>สิ่งที่ทำได้</th></tr>
+      <tr><td>Admin</td><td>ดูข้อมูลทั้งหมด ปรับปรุงสต็อก และอนุมัติรายการสินค้าสูญหายหรือส่วนต่าง</td></tr>
+      <tr><td>Warehouse Staff</td><td>บันทึกรับเข้า-จ่ายออก และบันทึกผลการนับสต็อกประจำวัน</td></tr>
+      <tr><td>Executive / Auditor</td><td>ดูรายงานได้อย่างเดียว ห้ามแก้ไขข้อมูล</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>3. ความต้องการเชิงฟังก์ชัน (Functional Requirements)</h2>
+    <table>
+      <tr><th>รหัส</th><th>อ้างอิง</th><th>ความต้องการ</th><th>เกณฑ์การยอมรับ</th></tr>
+      <tr><td>TR-01</td><td>REQ-01</td><td>ระบบล็อกอินและกำหนดสิทธิ์ผู้ใช้งาน 3 ระดับ (Admin, Warehouse Staff, Executive/Auditor) แสดงเมนูตามบทบาท</td><td>เข้าสู่ระบบด้วยแต่ละบทบาทแล้วเห็นเมนูตามสิทธิ์ถูกต้อง</td></tr>
+      <tr><td>TR-02</td><td>REQ-02</td><td>Admin ดูข้อมูลทั้งหมด ปรับปรุงสต็อก และอนุมัติรายการสินค้าสูญหายหรือส่วนต่าง</td><td>Admin อนุมัติรายการส่วนต่างได้สำเร็จ</td></tr>
+      <tr><td>TR-03</td><td>REQ-03</td><td>Warehouse Staff บันทึกรับเข้า-จ่ายออก และบันทึกผลการนับสต็อกประจำวัน</td><td>Staff บันทึกรายการรับเข้าและจ่ายออกได้</td></tr>
+      <tr><td>TR-04</td><td>REQ-04</td><td>Executive/Auditor เปิดดูรายงานแบบอ่านอย่างเดียว ไม่มีสิทธิ์แก้ไขข้อมูล</td><td>Auditor เปิดรายงานได้แต่ไม่มีปุ่มแก้ไข</td></tr>
+      <tr><td>TR-05</td><td>REQ-05</td><td>Dashboard แสดงภาพรวมสต็อกคงเหลือและสถานะสินค้าใกล้หมด</td><td>Dashboard แสดงยอดคงเหลือและสินค้าใกล้หมดถูกต้อง</td></tr>
+      <tr><td>TR-06</td><td>REQ-06</td><td>ระบบแจ้งเตือน Safety Stock Alert เมื่อสต็อกต่ำกว่าจุดเตือน</td><td>แจ้งเตือนเมื่อสต็อกต่ำกว่าจุดเตือน</td></tr>
+      <tr><td>TR-07</td><td>REQ-07</td><td>Quick Search ค้นหาด้วยรหัส SKU หรือชื่อสินค้า</td><td>ค้นหาด้วย SKU และชื่อสินค้าได้ผลลัพธ์ถูกต้อง</td></tr>
+      <tr><td>TR-08</td><td>REQ-08</td><td>จัดการข้อมูลสินค้า: SKU, ชื่อ, หมวดหมู่, ราคา, จุดเตือนสต็อก และซัพพลายเออร์</td><td>บันทึกและแก้ไขข้อมูลสินค้าครบทุกฟิลด์ได้</td></tr>
+      <tr><td>TR-09</td><td>REQ-09</td><td>รับเข้า/จ่ายออก ผ่านสแกนบาร์โค้ดหรือเลือกรายการ ระบุจำนวน และเลือกประเภทธุรกรรม (ซื้อเข้า, ขายออก, สินค้าเสียหาย, ส่งคืน)</td><td>บันทึกรายการแต่ละประเภทธุรกรรมได้ถูกต้อง</td></tr>
+      <tr><td>TR-10</td><td>REQ-10</td><td>Cycle Count เริ่มรอบนับตามโซนหรือชั้นวาง และเปรียบเทียบยอดนับจริงกับระบบโดยอัตโนมัติ</td><td>ระบบแสดงผลต่างระหว่างยอดนับจริงกับยอดในระบบ</td></tr>
+      <tr><td>TR-11</td><td>REQ-11</td><td>บังคับส่งคำขออนุมัติถึง Admin เมื่อผลต่างเกิน 5% หรือมูลค่าเกิน 1,000 บาท ก่อนตัดสต็อกจริง</td><td>รายการที่เกินเงื่อนไขถูกบล็อกรออนุมัติก่อนตัดสต็อก</td></tr>
+      <tr><td>TR-12</td><td>REQ-12</td><td>รองรับการสแกนบาร์โค้ดผ่านกล้องมือถือ/แท็บเล็ต และเครื่องสแกนบาร์โค้ด USB</td><td>สแกนผ่านกล้องและเครื่องสแกน USB ได้ทั้งคู่</td></tr>
+      <tr><td>TR-13</td><td>REQ-13</td><td>รายงานประวัติการเคลื่อนไหวสินค้าเข้า-ออก (รายวัน/รายเดือน) และรายงานมูลค่าสต็อกรวมในคลัง</td><td>เรียกดูรายงานแต่ละประเภทได้ถูกต้อง</td></tr>
+      <tr><td>TR-14</td><td>REQ-14</td><td>รองรับการส่งออกข้อมูล (Export) เป็นไฟล์ Excel และ CSV</td><td>ไฟล์ที่ Export เปิดได้และข้อมูลครบถ้วน</td></tr>
+      <tr><td>TR-15</td><td>REQ-15</td><td>ผลลัพธ์จากการสแกนบาร์โค้ดเสร็จภายใน 1 วินาที ทำงานบน Huawei Cloud เท่านั้น และสำรองข้อมูลทุกวัน</td><td>ทดสอบเวลาสแกนไม่เกิน 1 วินาที และตรวจสอบ Backup รายวันสำเร็จ</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>4. ข้อมูล (Data)</h2>
+    <table>
+      <tr><th>ข้อมูล</th><th>ฟิลด์หลัก</th></tr>
+      <tr><td>ผู้ใช้งาน (User)</td><td>รหัสผู้ใช้, บทบาท (Admin, Warehouse Staff, Executive/Auditor)</td></tr>
+      <tr><td>สินค้า (Product)</td><td>SKU, ชื่อ, หมวดหมู่, ราคา, จุดเตือนสต็อก, ซัพพลายเออร์, ยอดคงเหลือ</td></tr>
+      <tr><td>รายการรับเข้า/จ่ายออก (Transaction)</td><td>รหัสรายการ, SKU, ประเภทธุรกรรม (ซื้อเข้า, ขายออก, สินค้าเสียหาย, ส่งคืน), จำนวน, วันที่</td></tr>
+      <tr><td>การนับสต็อก (Cycle Count)</td><td>โซน/ชั้นวาง, ยอดนับจริง, ยอดในระบบ, ผลต่าง, สถานะอนุมัติ</td></tr>
+      <tr><td>รายงาน (Report)</td><td>ประวัติการเคลื่อนไหวรายวัน/รายเดือน, มูลค่าสต็อกรวมในคลัง</td></tr>
+    </table>
+  </section>
+
+  <section>
+    <h2>5. สถาปัตยกรรมโซลูชัน (Solution Architecture)</h2>
+
+    <h3>5.1 ภาพรวมสถาปัตยกรรม (Architecture Overview)</h3>
+    <div class="figure">
+      <pre class="mermaid">
+flowchart TB
+  subgraph CLIENT["ชั้นผู้ใช้ (Client)"]
+    DEV["มือถือ / แท็บเล็ต (Web Browser)"]
+    USB["เครื่องสแกนบาร์โค้ด USB"]
+    CAM["กล้องมือถือ / แท็บเล็ต"]
+  end
+  subgraph EDGE["ชั้นขอบเครือข่าย (Edge)"]
+    WAF["WAF"]
+    ELB["ELB"]
+    CDN["CDN"]
+  end
+  subgraph APP["ชั้นแอปพลิเคชัน (App)"]
+    APIGW["API Gateway"]
+    CCE["CCE - Web App และ API"]
+  end
+  subgraph DATA["ชั้นข้อมูล (Data)"]
+    RDS["RDS - ฐานข้อมูลสต็อก"]
+    DCS["DCS Redis - Cache"]
+    OBS["OBS - ไฟล์ Export และ Backup"]
+  end
+  subgraph OPS["ชั้นปฏิบัติการและความปลอดภัย (Ops-Security)"]
+    IAM["IAM"]
+    KMS["KMS"]
+    CTS["CTS"]
+    LTS["LTS"]
+    AOM["AOM"]
+    CBR["CBR"]
+    SMN["SMN - แจ้งเตือน"]
+  end
+  USB --> DEV
+  CAM --> DEV
+  DEV --> CDN
+  CDN --> WAF
+  WAF --> ELB
+  ELB --> APIGW
+  APIGW --> CCE
+  CCE --> RDS
+  CCE --> DCS
+  CCE --> OBS
+  CCE --> SMN
+  CCE --> KMS
+  CCE --> LTS
+  CCE --> AOM
+  CCE --> CTS
+  RDS --> CBR
+  IAM --> CCE
+      </pre>
+      <div class="cap">ภาพที่ 5.1 แผนผังสถาปัตยกรรมโซลูชันบน Huawei Cloud</div>
+    </div>
+
+    <h3>5.2 แผนภาพกระบวนการ (Process Diagram)</h3>
+    <div class="figure">
+      <pre class="mermaid">
+flowchart TD
+  S([เริ่มต้น: พนักงานเข้าสู่ระบบ]) --> A{ตรวจสอบสิทธิ์ RBAC}
+  A -->|Admin| B[Dashboard ภาพรวมสต็อก]
+  A -->|Warehouse Staff| B
+  A -->|Executive / Auditor| R[ดูรายงานอย่างเดียว]
+  B --> C[สแกนบาร์โค้ด SKU]
+  C --> D{ประเภทธุรกรรม}
+  D -->|รับเข้า / จ่ายออก| E[บันทึกรายการและจำนวน]
+  D -->|นับสต็อก Cycle Count| F[เปรียบเทียบยอดนับจริงกับระบบ]
+  E --> G[อัปเดตสต็อก]
+  F --> H{ผลต่างเกิน 5% หรือมูลค่าเกิน 1,000 บาท}
+  H -->|ไม่เกิน| G
+  H -->|เกิน| I[ส่งคำขออนุมัติถึง Admin]
+  I --> J{Admin อนุมัติ}
+  J -->|อนุมัติ| K[ตัดสต็อกจริง]
+  J -->|ไม่อนุมัติ| L[คงยอดเดิม]
+  G --> M([สิ้นสุด])
+  K --> M
+  L --> M
+  R --> M
+      </pre>
+      <div class="cap">ภาพที่ 5.2 แผนภาพกระบวนการธุรกิจหลัก</div>
+    </div>
+
+    <h3>5.3 แผนภาพ ER (ER Diagram - Databases)</h3>
+    <div class="figure">
+      <pre class="mermaid">
+erDiagram
+  USER ||--o{ TRANSACTION : "บันทึก"
+  USER ||--o{ CYCLE_COUNT : "ดำเนินการ"
+  CATEGORY ||--o{ PRODUCT : "จัดกลุ่ม"
+  SUPPLIER ||--o{ PRODUCT : "จัดหา"
+  PRODUCT ||--o{ TRANSACTION : "มีรายการ"
+  PRODUCT ||--o{ CYCLE_COUNT_ITEM : "ถูกนับ"
+  CYCLE_COUNT ||--o{ CYCLE_COUNT_ITEM : "ประกอบด้วย"
+  CYCLE_COUNT_ITEM ||--o| APPROVAL : "ขออนุมัติ"
+
+  USER {
+    string user_id PK
+    string role
+  }
+  PRODUCT {
+    string SKU PK
+    string name
+    decimal price
+    int safety_stock
+    int qty_on_hand
+  }
+  CATEGORY {
+    string category_id PK
+    string name
+  }
+  SUPPLIER {
+    string supplier_id PK
+    string name
+  }
+  TRANSACTION {
+    string txn_id PK
+    string type
+    int qty
+    datetime created_at
+  }
+  CYCLE_COUNT {
+    string count_id PK
+    string zone
+    datetime count_date
+  }
+  CYCLE_COUNT_ITEM {
+    string item_id PK
+    int system_qty
+    int counted_qty
+    decimal diff_value
+  }
+  APPROVAL {
+    string approval_id PK
+    string status
+  }
+      </pre>
+      <div class="cap">ภาพที่ 5.3 แผนภาพ ER ของฐานข้อมูล</div>
+    </div>
+
+    <h3>5.4 แผนภาพลำดับ (Sequence Diagram)</h3>
+    <div class="figure">
+      <pre class="mermaid">
+sequenceDiagram
+  autonumber
+  actor U as พนักงานคลัง
+  participant W as Web App (CCE)
+  participant G as API Gateway
+  participant RB as บริการสิทธิ์ RBAC
+  participant DB as RDS
+  participant AP as Admin
+  U->>W: เข้าสู่ระบบ
+  W->>G: ส่งข้อมูลเข้าสู่ระบบ
+  G->>RB: ตรวจสอบสิทธิ์ตามบทบาท
+  RB-->>W: คืนค่าสิทธิ์และเมนู
+  W-->>U: แสดง Dashboard
+  U->>W: สแกนบาร์โค้ด SKU
+  W->>G: ค้นหา SKU
+  G->>DB: ดึงข้อมูลสินค้า
+  DB-->>W: คืนยอดคงเหลือ
+  U->>W: บันทึกรับเข้า / จ่ายออก
+  W->>G: บันทึกรายการ
+  G->>DB: บันทึกและอัปเดตสต็อก
+  DB-->>W: ยืนยันผล
+  Note over U,DB: กรณี Cycle Count พบส่วนต่าง
+  U->>W: บันทึกผลนับจริง
+  W->>G: เปรียบเทียบยอด
+  G->>DB: คำนวณผลต่าง
+  DB-->>W: ผลต่างเกิน 5% หรือเกิน 1,000 บาท
+  alt เกินเงื่อนไข
+    W->>AP: ส่งคำขออนุมัติ
+    AP-->>W: อนุมัติ
+    W->>DB: ตัดสต็อกจริง
+  else ไม่เกินเงื่อนไข
+    W->>DB: ตัดสต็อกทันที
+  end
+      </pre>
+      <div class="cap">ภาพที่ 5.4 แผนภาพลำดับของกระบวนการหลัก</div>
+    </div>
+
+    <h3>5.5 โครงสร้างพื้นฐานบน Huawei Cloud (Huawei Cloud Infrastructure)</h3>
+    <ul>
+      <li>ภูมิภาคและ Availability Zone (region/AZ) สำหรับติดตั้งระบบ: [TBC: ภูมิภาคและโซนที่ต้องการ]</li>
+      <li>สำรองข้อมูลทุกวันด้วย CBR ตาม REQ-15</li>
+      <li>ปรับขนาดระบบด้วย CCE (container) และ Load Balancing ผ่าน ELB สำหรับความพร้อมใช้งาน: [TBC: ขนาด cluster และจำนวน instance]</li>
+      <li>ฐานข้อมูล RDS จัดเก็บข้อมูลสต็อกหลัก: [TBC: ชนิดฐานข้อมูลและขนาด instance]</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>6. แพลตฟอร์มและการเชื่อมต่อ (Platform and Integrations)</h2>
+    <ul>
+      <li>อุปกรณ์: มือถือและแท็บเล็ต ใช้งานผ่าน Web Browser</li>
+      <li>การสแกนบาร์โค้ด: กล้องมือถือ/แท็บเล็ต และเครื่องสแกนบาร์โค้ด USB (REQ-12)</li>
+      <li>การส่งออกข้อมูล: ไฟล์ Excel และ CSV (REQ-14)</li>
+      <li>ทำงานบน Huawei Cloud เท่านั้น (REQ-15)</li>
+      <li>เชื่อมต่อ ERP / POS ภายนอก: อยู่นอกขอบเขตเฟสแรก แต่ออกแบบโครงสร้าง API รองรับไว้ล่วงหน้า [TBC: รายละเอียดโครงสร้าง API - Q-03]</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>7. คำถามที่ยังเปิดอยู่ (Open Questions)</h2>
+    <table>
+      <tr><th>รหัส</th><th>คำถาม</th></tr>
+      <tr><td>Q-01</td><td>[TBC: รูปแบบมาตรฐานของป้ายบาร์โค้ดในปัจจุบัน]</td></tr>
+      <tr><td>Q-02</td><td>[TBC: ช่องทางการแจ้งเตือนกรณีต้องรอการอนุมัติส่วนต่างสต็อก]</td></tr>
+      <tr><td>Q-03</td><td>[TBC: รายละเอียดโครงสร้าง API ที่ต้องรองรับสำหรับการเชื่อมต่อ ERP / POS ในอนาคต]</td></tr>
+      <tr><td>Q-04</td><td>[TBC: ภูมิภาคและ Availability Zone บน Huawei Cloud ที่ต้องการ]</td></tr>
+      <tr><td>Q-05</td><td>[TBC: ชนิดฐานข้อมูลและขนาด instance ของ RDS]</td></tr>
+      <tr><td>Q-06</td><td>[TBC: ขนาด CCE cluster และจำนวน instance สำหรับการปรับขนาดระบบ]</td></tr>
+    </table>
+  </section>
+
+  <footer>เอกสารนี้สร้างจาก BR ฉบับสมบูรณ์ - ห้ามแก้ไข BR.docx / BR.md</footer>
+</div>
+<script type="module">
+  import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+  mermaid.initialize({
+    startOnLoad: true,
+    securityLevel: "loose",
+    theme: "base",
+    fontFamily: "Tahoma, Sarabun, Segoe UI, sans-serif",
+    themeVariables: {
+      primaryColor: "#E8EEF5", primaryBorderColor: "#0B3D6B", primaryTextColor: "#0B3D6B",
+      secondaryColor: "#f7f9fc", tertiaryColor: "#ffffff", lineColor: "#0B3D6B",
+      nodeBorder: "#0B3D6B", clusterBkg: "#f2f6fb", clusterBorder: "#9db6cf",
+      edgeLabelBackground: "#ffffff", fontSize: "15px"
+    },
+    flowchart: { curve: "basis", htmlLabels: true, nodeSpacing: 46, rankSpacing: 55 },
+    sequence: { actorMargin: 60, width: 150, height: 46, boxMargin: 10, mirrorActors: false, useMaxWidth: true },
+    er: { useMaxWidth: true, entityPadding: 15 }
+  });
+</script>
+</body>
+</html>
